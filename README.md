@@ -93,7 +93,7 @@ stateDiagram-v2
 Requirements: Node.js 22.13+, Python 3.12+, and MetaMask for writes.
 
 ```bash
-npm ci
+npm install
 npm run dev
 ```
 
