@@ -1,6 +1,8 @@
 import type { ProtocolStats, TruthBondClaim, TruthBondEvidence } from "./types";
 
-const now = Math.floor(Date.now() / 1000);
+// Fixed preview timestamp keeps server and client markup identical during hydration.
+// Live contract data replaces these cards immediately after the first read.
+const now = 1_788_858_000;
 
 export const PREVIEW_CLAIMS: TruthBondClaim[] = [
   {
