@@ -1,0 +1,36 @@
+"use client";
+
+import { ExternalLink, RefreshCw, ShieldCheck } from "lucide-react";
+import { useParams } from "next/navigation";
+import { FormEvent, useCallback, useEffect, useState } from "react";
+import { parseEther } from "viem";
+import { ProtocolFooter } from "@/components/truthbond/protocol-footer";
+import { ProtocolHeader } from "@/components/truthbond/protocol-header";
+import { StatusPill } from "@/components/truthbond/status-pill";
+import { TransactionPanel } from "@/components/truthbond/transaction-panel";
+import { useTruthBondTransaction } from "@/components/truthbond/use-truthbond-transaction";
+import { useWallet } from "@/components/truthbond/wallet-provider";
+import { formatDate, formatGen, shortenAddress, ZERO_ADDRESS } from "@/lib/truthbond/format";
+import { readClaim, readEvidence } from "@/lib/truthbond/sdk";
+import type { TruthBondClaim, TruthBondEvidence } from "@/lib/truthbond/types";
+
+export default function ClaimDetailPage() {
+  const params=useParams<{claimId:string}>(); const claimId=decodeURIComponent(params.claimId); const {address}=useWallet(); const {state,execute}=useTruthBondTransaction();
+  const [claim,setClaim]=useState<TruthBondClaim|null>(null); const [evidence,setEvidence]=useState<TruthBondEvidence[]>([]); const [error,setError]=useState(""); const [challenge,setChallenge]=useState(""); const [url,setUrl]=useState(""); const [note,setNote]=useState(""); const [supports,setSupports]=useState(true);
+  const refresh=useCallback(()=>{ setError(""); Promise.all([readClaim(claimId),readEvidence(claimId)]).then(([c,e])=>{setClaim(c);setEvidence(e)}).catch(e=>setError(e instanceof Error?e.message:String(e))); },[claimId]);
+  useEffect(()=>refresh(),[refresh]);
+  async function run(functionName:string,args:(string|boolean)[],label:string,value=0n){const ok=await execute({functionName,args,label,value});if(ok)refresh()}
+  if(error) return <><ProtocolHeader/><main className="page-shell"><div className="error-card"><h1>Claim unavailable</h1><p>{error}</p><button className="button button-secondary" onClick={refresh}>Retry</button></div></main></>;
+  if(!claim) return <><ProtocolHeader/><main className="page-shell loading-ledger">Reading finalized contract state…</main></>;
+  const now=Math.floor(Date.now()/1000); const isCreator=address?.toLowerCase()===claim.creator.toLowerCase(); const isChallenger=address?.toLowerCase()===claim.challenger.toLowerCase(); const canChallenge=claim.status==="OPEN"&&now<=claim.challengeDeadline&&!isCreator; const canEvidence=claim.status==="CHALLENGED"&&(isCreator||isChallenger); const canResolve=claim.status==="CHALLENGED"&&now>claim.challengeDeadline&&now<=claim.resolutionDeadline; const credit=isCreator?claim.creatorCredit:isChallenger?claim.challengerCredit:0n; const claimed=isCreator?claim.creatorClaimed:isChallenger?claim.challengerClaimed:false;
+  return <><ProtocolHeader/><main className="page-shell claim-detail"><div className="detail-heading"><div><div className="claim-card-top"><StatusPill status={claim.finalVerdict||claim.status}/><span className="claim-id">#{claim.claimId}</span></div><h1>{claim.claimText}</h1></div><button className="icon-button" aria-label="Refresh claim" onClick={refresh}><RefreshCw size={17}/></button></div>
+    {claim.finalVerdict&&<section className={`verdict-panel verdict-${claim.finalVerdict.toLowerCase()}`}><div><ShieldCheck/><span>GENLAYER CONSENSUS VERDICT</span></div><h2>{claim.finalVerdict}</h2><strong>{claim.confidence}<small>/100 confidence</small></strong><p>{claim.verdictReason}</p><div className="source-tally"><span>{claim.sourcesConfirming} confirming</span><span>{claim.sourcesContradicting} contradicting</span></div></section>}
+    <div className="detail-grid"><div className="detail-main"><section className="ledger-panel"><span className="kicker">RESOLUTION STANDARD</span><p>{claim.resolutionCriteria}</p></section>{claim.challenger!==ZERO_ADDRESS&&<section className="ledger-panel"><span className="kicker">CHALLENGE</span><p>{claim.challengeReason}</p><small>Filed by {shortenAddress(claim.challenger,6)}</small></section>}<section className="ledger-panel"><div className="panel-title"><div><span className="kicker">PUBLIC RECORD</span><h2>Submitted evidence</h2></div><span>{evidence.length} sources</span></div>{evidence.length?evidence.map((item,i)=><a className="evidence-row" href={item.url} target="_blank" rel="noreferrer" key={`${item.url}-${i}`}><span className={item.supportsClaim?"support-mark":"contest-mark"}>{item.supportsClaim?"SUPPORTS":"CONTESTS"}</span><div><strong>{new URL(item.url).hostname}</strong><p>{item.note}</p><small>{shortenAddress(item.submitter)} · {formatDate(item.submittedAt)}</small></div><ExternalLink size={17}/></a>):<p className="muted-copy">No public evidence submitted yet.</p>}</section></div>
+      <aside className="detail-aside"><section className="ledger-panel fact-table"><h2>Bond ledger</h2><div><span>Creator bond</span><strong>{formatGen(claim.creatorBond)}</strong></div><div><span>Challenge bond</span><strong>{formatGen(claim.challengerBond)}</strong></div><div><span>Settlement</span><strong>{claim.settlementStatus}</strong></div><div><span>Challenge closes</span><strong>{formatDate(claim.challengeDeadline)}</strong></div><div><span>Resolution closes</span><strong>{formatDate(claim.resolutionDeadline)}</strong></div></section>
+      {canChallenge&&<form className="action-card" onSubmit={(e:FormEvent)=>{e.preventDefault();void run("challenge_claim",[claimId,challenge],"Challenge",claim.creatorBond)}}><h2>Challenge this claim</h2><textarea required minLength={20} value={challenge} onChange={e=>setChallenge(e.target.value)} placeholder="Explain precisely what must be disproved…"/><button className="button button-primary button-wide">Match {formatGen(claim.creatorBond)} bond</button></form>}
+      {canEvidence&&<form className="action-card" onSubmit={(e:FormEvent)=>{e.preventDefault();void run("submit_evidence",[claimId,url,note,supports],"Evidence submission")}}><h2>Submit public evidence</h2><input required type="url" value={url} onChange={e=>setUrl(e.target.value)} placeholder="https://reliable-source.example/article"/><textarea required value={note} onChange={e=>setNote(e.target.value)} placeholder="What fact does this source establish?"/><label className="check-row"><input type="checkbox" checked={supports} onChange={e=>setSupports(e.target.checked)}/> Supports the claim</label><button className="button button-secondary button-wide">Add evidence</button></form>}
+      {canResolve&&<section className="action-card accent-action"><h2>Evidence window closed</h2><p>Ask GenLayer validators to independently retrieve the sources and reach a structured verdict.</p><button className="button button-primary button-wide" onClick={()=>void run("resolve_claim",[claimId],"Intelligent resolution")}>Resolve with consensus</button></section>}
+      {credit>0n&&!claimed&&<section className="action-card"><h2>Funds claimable</h2><p>Your finalized credit is {formatGen(credit)}.</p><button className="button button-primary button-wide" onClick={()=>void run("claim_reward",[claimId],"Reward claim")}>Claim settlement</button></section>}
+      <TransactionPanel state={state}/></aside></div>
+  </main><ProtocolFooter/></>;
+}
