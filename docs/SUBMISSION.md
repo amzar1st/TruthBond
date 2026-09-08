@@ -29,7 +29,7 @@ TruthBond is an on-chain evidence challenge protocol for objective, publicly ver
 
 ## Evidence links
 
-- Website: pending public deployment verification
+- Website: https://truthbond.amzar1st96.chatgpt.site
 - Source: https://github.com/amzar1st/TruthBond
 - Contract: https://explorer-studio.genlayer.com/address/0x9Cd93529fFba38Dc5c07eC8e9eef93D56E48d569
 - Deployment: https://explorer-studio.genlayer.com/tx/0x9054a10345235bfdb07e68fcef4d1a68a7abb829b5cb2549332dd4e858e1dc83
