@@ -1,5 +1,7 @@
 # TruthBond
 
+![TruthBond logo](public/truthbond-logo.svg)
+
 > TruthBond turns disputed real-world claims into on-chain, evidence-backed verdicts using GenLayer consensus.
 
 TruthBond is an on-chain evidence challenge protocol. A creator states an objectively verifiable claim and locks a GEN bond; a challenger matches it; both parties add public evidence; then a GenLayer Intelligent Contract coordinates independent validator web retrieval and LLM reasoning. The structured consensus verdict changes contract state and assigns the bonded funds.
