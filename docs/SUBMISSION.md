@@ -8,24 +8,32 @@ TruthBond
 
 Dispute Resolution
 
-Suggested sub-tags: AI, Oracles, Consumer, DeFi.
+Suggested sub-tags: AI & Agents, Identity/Reputation, Onchain Justice.
 
-## One-liner (123 characters)
+## One-liner (108 characters)
 
 TruthBond turns disputed real-world claims into on-chain, evidence-backed verdicts using GenLayer consensus.
 
 ## Description
 
-TruthBond is an on-chain evidence challenge protocol for objective, publicly verifiable claims. A creator states a fact and locks a GEN bond. A challenger matches that bond and both parties submit public evidence URLs. TruthBond’s GenLayer Intelligent Contract is the adjudicator: validators independently retrieve the evidence, treat page content as untrusted data, reason against explicit resolution criteria, and reach consensus on a structured VERIFIED, FALSE, or INCONCLUSIVE decision. The verdict, confidence, source tally, reason, reputation updates, and settlement credits are committed on-chain. VERIFIED awards the pot to the creator, FALSE awards it to the challenger, and INCONCLUSIVE refunds both. A responsive Next.js frontend provides MetaMask wallet connection, live contract reads, guarded actions, consensus transaction tracking, evidence inspection, and reputation profiles. GenLayer is essential because deterministic contracts cannot independently inspect current web evidence or interpret conflicting natural-language facts.
+TruthBond is an on-chain evidence challenge protocol for objective, publicly verifiable claims. A creator posts a claim and GEN bond; a challenger matches the bond and both submit public URLs. The TruthBondIntelligentContract—not the frontend—asks GenLayer validators to retrieve evidence, treat webpage text only as untrusted factual input, evaluate the claim against explicit criteria, and reach consensus on structured VERIFIED, FALSE, or INCONCLUSIVE fields. The finalized verdict, confidence, source counts, reasoning, reputation, and settlement credits are stored on-chain. VERIFIED awards the pot to the creator, FALSE to the challenger, and INCONCLUSIVE refunds both. A responsive Next.js app provides MetaMask connection, guarded transactions, live claim and evidence reads, settlement status, and reputation profiles. GenLayer is essential because deterministic smart contracts cannot independently read current public evidence and judge conflicting natural-language facts.
 
 ## How to review
 
 1. Open the public TruthBond website and connect MetaMask to Studionet.
 2. Open the resolved `truthbond-demo-002` claim.
-3. Review its creator bond, matched challenge, and two public evidence URLs.
+3. Review its creator bond, matched challenge, and three public evidence URLs.
 4. Inspect the validator-generated verdict, confidence, source tally, and reason.
 5. Follow the contract and transaction links to GenLayer Explorer.
 6. Confirm final state using `get_claim`, `get_claim_evidence`, and `get_protocol_stats`.
+
+## Expected verification outcome
+
+The demo claim resolves `VERIFIED` with confidence `97/100`, three confirming sources, zero contradicting sources, status `SETTLED`, settlement status `DISPATCHED`, and `creator_claimed = true`. The creator settlement credit is 2 GEN (the combined bonds).
+
+## Network
+
+Studio / Studionet (chain ID 61999).
 
 ## Evidence links
 
