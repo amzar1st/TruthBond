@@ -1,0 +1,5 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" role="img" aria-labelledby="title desc">
+  <title id="title">TruthBond mark</title><desc id="desc">A shield with a verification check and three connected evidence nodes.</desc>
+  <defs><linearGradient id="shield" x1="80" y1="40" x2="420" y2="470" gradientUnits="userSpaceOnUse"><stop stop-color="#132931"/><stop offset="1" stop-color="#081318"/></linearGradient><filter id="glow" x="-40%" y="-40%" width="180%" height="180%"><feGaussianBlur stdDeviation="7"/></filter></defs>
+  <rect width="512" height="512" rx="112" fill="#071015"/><path d="M256 55 426 120v122c0 109-68 185-170 223C154 427 86 351 86 242V120L256 55Z" fill="url(#shield)" stroke="#37E6CF" stroke-width="15"/><path d="m168 256 54 54 126-126" fill="none" stroke="#37E6CF" stroke-width="34" stroke-linecap="round" stroke-linejoin="round"/><g fill="#F2B84B"><circle cx="256" cy="58" r="19"/><circle cx="87" cy="120" r="17"/><circle cx="425" cy="120" r="17"/></g><g fill="#37E6CF" opacity=".25" filter="url(#glow)"><circle cx="256" cy="58" r="25"/><circle cx="87" cy="120" r="23"/><circle cx="425" cy="120" r="23"/></g>
+</svg>
