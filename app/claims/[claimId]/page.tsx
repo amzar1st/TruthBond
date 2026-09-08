@@ -3,7 +3,6 @@
 import { ExternalLink, RefreshCw, ShieldCheck } from "lucide-react";
 import { useParams } from "next/navigation";
 import { FormEvent, useCallback, useEffect, useState } from "react";
-import { parseEther } from "viem";
 import { ProtocolFooter } from "@/components/truthbond/protocol-footer";
 import { ProtocolHeader } from "@/components/truthbond/protocol-header";
 import { StatusPill } from "@/components/truthbond/status-pill";
